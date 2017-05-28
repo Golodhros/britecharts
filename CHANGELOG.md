@@ -1,3 +1,22 @@
+Changes:
+* Added new Stacked Bar Chart (thanks bung87)
+* Normalizing application of margins and default margins (Look out, changes sizing of some charts)
+* Added animations to Bar chart
+* Added `isAnimated` flag to Donut, Bar, Line, Stacked Area
+* Added configuration for single line gradients
+* Ensure stacked area has entry values (thanks tgallice)
+* Removed bowser dependency (thanks ryanwholey)
+* Removed underscore dependency (thanks nobitagit)
+* Adding Getting started to demos header (thanks bung87)
+* Support of dynamic calculation of percentages in Donut chart (Thanks jenjwong)
+* Removed padding on Donut slices (thanks tgallice)
+
+Bug Fixes:
+* Fixed Eventbrite copyright message showing up on demo print (Thanks cnwalker)
+* Fixed environment variables for scripts when running in windows (Thanks Tobbe)
+* Fixed data in CDN demo
+* Fixed donut demo data (thanks jenjwong)
+
 1.5.3 - Patch
 ---------------------
 Bug Fixes:
