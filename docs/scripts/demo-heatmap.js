@@ -8651,16 +8651,22 @@ webpackJsonp([4,11],[
 	
 	        var margin = {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Adding simple code
 	            top: 10,
 	            right: 10,
 	            bottom: 10,
 	            left: 10
+<<<<<<< HEAD
 =======
 	            top: 20,
 	            right: 20,
 	            bottom: 30,
 	            left: 40
 >>>>>>> Tests passing
+=======
+>>>>>>> Adding simple code
 	        },
 	            width = 960,
 	            height = 500,
@@ -8671,10 +8677,14 @@ webpackJsonp([4,11],[
 	            boxes = void 0,
 	            boxSize = 20,
 <<<<<<< HEAD
+<<<<<<< HEAD
 	            colorSchema = colorHelper.colorSchemas.extendedRedColorSchema,
 =======
 	            colorSchema = colorHelper.colorSchemas.extendedLightBlueColorSchema,
 >>>>>>> Tests passing
+=======
+	            colorSchema = colorHelper.colorSchemas.extendedRedColorSchema,
+>>>>>>> Adding simple code
 	            colorScale = void 0,
 	
 	

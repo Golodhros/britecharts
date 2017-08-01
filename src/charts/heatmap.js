@@ -54,10 +54,10 @@ define(function(require) {
     return function module() {
 
         let margin = {
-                top: 20,
-                right: 20,
-                bottom: 30,
-                left: 40
+                top: 10,
+                right: 10,
+                bottom: 10,
+                left: 10
             },
             width = 960,
             height = 500,
@@ -68,7 +68,7 @@ define(function(require) {
             boxes,
             boxSize = 20,
             
-            colorSchema = colorHelper.colorSchemas.extendedLightBlueColorSchema,
+            colorSchema = colorHelper.colorSchemas.extendedGreenColorSchema,
             colorScale,
 
             // Dispatcher object to broadcast the mouse events

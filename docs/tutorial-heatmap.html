@@ -202,7 +202,18 @@
         <div class="col-md-6 sidebar">
             <h3>The code</h3>
             <pre><code class="language-javascript">
-                <!--TODO: Fill  -->
+let heatmapChart = heatmap(),
+    heatmapContainer = d3Selection.select('.js-heatmap-chart-container'),
+    containerWidth = heatmapContainer.node() ? heatmapContainer.node().getBoundingClientRect().width : false,
+    dataset = [...];
+
+if (containerWidth) {
+    heatmapChart
+        .width(containerWidth)
+        .height(300);
+
+    heatmapContainer.datum(dataset).call(heatmapChart);
+}
             </code></pre>
 
             <!-- <h4>Colors</h4>
