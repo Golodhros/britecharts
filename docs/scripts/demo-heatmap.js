@@ -8650,10 +8650,17 @@ webpackJsonp([4,11],[
 	    return function module() {
 	
 	        var margin = {
+<<<<<<< HEAD
 	            top: 10,
 	            right: 10,
 	            bottom: 10,
 	            left: 10
+=======
+	            top: 20,
+	            right: 20,
+	            bottom: 30,
+	            left: 40
+>>>>>>> Tests passing
 	        },
 	            width = 960,
 	            height = 500,
@@ -8663,7 +8670,11 @@ webpackJsonp([4,11],[
 	            data = void 0,
 	            boxes = void 0,
 	            boxSize = 20,
+<<<<<<< HEAD
 	            colorSchema = colorHelper.colorSchemas.extendedRedColorSchema,
+=======
+	            colorSchema = colorHelper.colorSchemas.extendedLightBlueColorSchema,
+>>>>>>> Tests passing
 	            colorScale = void 0,
 	
 	

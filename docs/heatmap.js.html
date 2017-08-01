@@ -196,14 +196,16 @@
     const d3Ease = require('d3-ease');
     const d3Axis = require('d3-axis');
     const d3Color = require('d3-color');
+    const d3Interpolate = require('d3-interpolate');
     const d3Dispatch = require('d3-dispatch');
     const d3Format = require('d3-format');
     const d3Scale = require('d3-scale');
     const d3Selection = require('d3-selection');
     const d3Transition = require('d3-transition');
 
-    const PERCENTAGE_FORMAT = '%';
-    const NUMBER_FORMAT = ',f';
+    const colorHelper = require('./helpers/colors');
+
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     /**
      * @typedef HeatmapData
@@ -229,15 +231,15 @@
      * @requires d3-array, d3-axis, d3-dispatch, d3-scale, d3-selection
      *
      * @example
-     * var barChart = bar();
+     * var heatmapChart = heatmap();
      *
-     * barChart
+     * heatmapChart
      *     .height(500)
      *     .width(800);
      *
      * d3Selection.select('.css-selector')
      *     .datum(dataset)
-     *     .call(barChart);
+     *     .call(heatmapChart);
      *
      */
     return function module() {
@@ -251,7 +253,18 @@
             width = 960,
             height = 500,
             chartWidth, chartHeight,
-            data;
+            svg,
+            data,
+
+            boxes,
+            boxSize = 20,
+            
+            colorSchema = colorHelper.colorSchemas.extendedLightBlueColorSchema,
+            colorScale,
+
+            // Dispatcher object to broadcast the mouse events
+            // Ref: https://github.com/mbostock/d3/wiki/Internals#d3_dispatch
+            dispatcher = d3Dispatch.dispatch('customMouseOver', 'customMouseOut');
         
         /**
          * This function creates the graph using the selection as container
@@ -265,10 +278,10 @@
                 chartHeight = height - margin.top - margin.bottom;
                 data = cleanData(_data);
 
-                // buildScales();
+                buildScales();
                 // buildAxis();
                 buildSVG(this);
-                // drawBars();
+                drawBoxes();
                 // drawAxis();
             });
         }
@@ -293,48 +306,24 @@
         }
 
         /**
-         * Creates the x and y scales of the graph
+         * Builds containers for the chart, the axis and a wrapper for all of them
+         * Also applies the Margin convention
          * @private
          */
-        function buildScales() {
-            let percentageAxis = Math.min(percentageAxisToMaxRatio * d3Array.max(data, getValue))
+        function buildContainerGroups() {
+            let container = svg
+                .append('g')
+                  .classed('container-group', true)
+                  .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-            if (isHorizontal) {
-                xScale = d3Scale.scaleLinear()
-                    .domain([0, percentageAxis])
-                    .rangeRound([0, chartWidth]);
-
-                yScale = d3Scale.scaleBand()
-                    .domain(data.map(getName))
-                    .rangeRound([chartHeight, 0])
-                    .padding(0.1);
-            } else {
-                xScale = d3Scale.scaleBand()
-                    .domain(data.map(getName))
-                    .rangeRound([0, chartWidth])
-                    .padding(0.1);
-
-                yScale = d3Scale.scaleLinear()
-                    .domain([0, percentageAxis])
-                    .rangeRound([chartHeight, 0]);
-            }
-
-            if (shouldReverseColorList) {
-                colorList = data.map(d => d)
-                                .reverse()
-                                .map(({name}, i) => ({
-                                        name,
-                                        color: colorSchema[i % colorSchema.length]}
-                                    ));
-            } else {
-                colorList = data.map(d => d)
-                                .map(({name}, i) => ({
-                                        name,
-                                        color: colorSchema[i % colorSchema.length]}
-                                    ));
-            }
-
-            colorMap = (item) => colorList.filter(({name}) => name === item)[0].color;
+            container
+                .append('g').classed('chart-group', true);
+            container
+                .append('g').classed('x-axis-group axis', true);
+            container
+                .append('g').classed('y-axis-group axis', true);
+            container
+                .append('g').classed('metadata-group', true);
         }
 
         /**
@@ -357,6 +346,17 @@
         }
 
         /**
+         * Creates the x and y scales of the graph
+         * @private
+         */
+        function buildScales() {
+            colorScale = d3Scale.scaleLinear()
+                    .range([colorSchema[0], colorSchema[colorSchema.length - 1]])
+                    .domain(d3Array.extent(data, function (d) { return d[2] }))
+                    .interpolate(d3Interpolate.interpolateHcl);
+        }
+
+        /**
          * Cleaning data adding the proper format
          * @param  {HeatmapData} originalData Data
          * @private
@@ -369,12 +369,56 @@
             return data;
         }
 
+        /**
+         * Custom OnMouseOut event handler
+         * @return {void}
+         * @private
+         */
+        function customOnMouseOut(e, d, chartWidth, chartHeight) {
+            dispatcher.call('customMouseOut', e, d, d3Selection.mouse(e), [chartWidth, chartHeight]);
+        }
+ 
+        /**
+         * Custom OnMouseOver event handler
+         * @return {void}
+         * @private
+         */
+        function customOnMouseOver(e, d, chartWidth, chartHeight) {
+            dispatcher.call('customMouseOver', e, d, d3Selection.mouse(e), [chartWidth, chartHeight]);
+            console.log(d[2] + ' commits between ' + d[1] + ':00 and ' + d[1] + ':59 at ' + days[d[0]]);
+        }
+
+        /**
+         * Draws the boxes that form the heatmap
+         * @private
+         */
+        function drawBoxes() {
+            boxes = svg.select('.chart-group').selectAll('.box')
+                    .data(data);
+
+            boxes.enter()
+              .append('rect')
+                .attr('x', function (d) { return d[1] * boxSize; })
+                .attr('y', function (d) { return d[0] * boxSize; })
+                .attr('width', boxSize)
+                .attr('height', boxSize)
+                .style('fill', function (d) { return colorScale(d[2]); })
+                .classed('box', true)
+                .on('mouseover', function (d) {
+                    customOnMouseOver(this, d, chartWidth, chartHeight);
+                })
+                .on('mouseout', function (d) {
+                    customOnMouseOut(this, d, chartWidth, chartHeight);
+                });
+        }
+
+
         // API
 
         /**
          * Gets or Sets the height of the chart
          * @param  {number} _x Desired width for the graph
-         * @return { height | module} Current height or Bar Chart module to chain calls
+         * @return { height | module} Current height or Heatmap Chart module to chain calls
          * @public
          */
         exports.height = function(_x) {
@@ -389,7 +433,7 @@
         /**
          * Gets or Sets the margin of the chart
          * @param  {object} _x Margin object to get/set
-         * @return { margin | module} Current margin or Bar Chart module to chain calls
+         * @return { margin | module} Current margin or Heatmap Chart module to chain calls
          * @public
          */
         exports.margin = function(_x) {
@@ -402,9 +446,23 @@
         };
 
         /**
+         * Exposes an 'on' method that acts as a bridge with the event dispatcher
+         * We are going to expose this events:
+         * customMouseOver and customMouseOut
+         *
+         * @return {module} Heatmap Chart
+         * @public
+         */
+        exports.on = function() {
+            let value = dispatcher.on.apply(dispatcher, arguments);
+
+            return value === dispatcher ? exports : value;
+        };
+
+        /**
          * Gets or Sets the width of the chart
          * @param  {number} _x Desired width for the graph
-         * @return { width | module} Current width or Bar Chart module to chain calls
+         * @return { width | module} Current width or Heatmap Chart module to chain calls
          * @public
          */
         exports.width = function(_x) {

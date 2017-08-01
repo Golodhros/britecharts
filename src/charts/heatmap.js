@@ -40,15 +40,15 @@ define(function(require) {
      * @requires d3-array, d3-axis, d3-dispatch, d3-scale, d3-selection
      *
      * @example
-     * var barChart = bar();
+     * var heatmapChart = heatmap();
      *
-     * barChart
+     * heatmapChart
      *     .height(500)
      *     .width(800);
      *
      * d3Selection.select('.css-selector')
      *     .datum(dataset)
-     *     .call(barChart);
+     *     .call(heatmapChart);
      *
      */
     return function module() {
@@ -64,10 +64,16 @@ define(function(require) {
             chartWidth, chartHeight,
             svg,
             data,
+
+            boxes,
+            boxSize = 20,
             
             colorSchema = colorHelper.colorSchemas.extendedLightBlueColorSchema,
             colorScale,
-            mmmm;
+
+            // Dispatcher object to broadcast the mouse events
+            // Ref: https://github.com/mbostock/d3/wiki/Internals#d3_dispatch
+            dispatcher = d3Dispatch.dispatch('customMouseOver', 'customMouseOut');
         
         /**
          * This function creates the graph using the selection as container
@@ -84,7 +90,7 @@ define(function(require) {
                 buildScales();
                 // buildAxis();
                 buildSVG(this);
-                // drawBars();
+                drawBoxes();
                 // drawAxis();
             });
         }
@@ -172,8 +178,48 @@ define(function(require) {
             return data;
         }
 
+        /**
+         * Custom OnMouseOut event handler
+         * @return {void}
+         * @private
+         */
+        function customOnMouseOut(e, d, chartWidth, chartHeight) {
+            dispatcher.call('customMouseOut', e, d, d3Selection.mouse(e), [chartWidth, chartHeight]);
+        }
+ 
+        /**
+         * Custom OnMouseOver event handler
+         * @return {void}
+         * @private
+         */
+        function customOnMouseOver(e, d, chartWidth, chartHeight) {
+            dispatcher.call('customMouseOver', e, d, d3Selection.mouse(e), [chartWidth, chartHeight]);
+            console.log(d[2] + ' commits between ' + d[1] + ':00 and ' + d[1] + ':59 at ' + days[d[0]]);
+        }
 
+        /**
+         * Draws the boxes that form the heatmap
+         * @private
+         */
+        function drawBoxes() {
+            boxes = svg.select('.chart-group').selectAll('.box')
+                    .data(data);
 
+            boxes.enter()
+              .append('rect')
+                .attr('x', function (d) { return d[1] * boxSize; })
+                .attr('y', function (d) { return d[0] * boxSize; })
+                .attr('width', boxSize)
+                .attr('height', boxSize)
+                .style('fill', function (d) { return colorScale(d[2]); })
+                .classed('box', true)
+                .on('mouseover', function (d) {
+                    customOnMouseOver(this, d, chartWidth, chartHeight);
+                })
+                .on('mouseout', function (d) {
+                    customOnMouseOut(this, d, chartWidth, chartHeight);
+                });
+        }
 
 
         // API
@@ -181,7 +227,7 @@ define(function(require) {
         /**
          * Gets or Sets the height of the chart
          * @param  {number} _x Desired width for the graph
-         * @return { height | module} Current height or Bar Chart module to chain calls
+         * @return { height | module} Current height or Heatmap Chart module to chain calls
          * @public
          */
         exports.height = function(_x) {
@@ -196,7 +242,7 @@ define(function(require) {
         /**
          * Gets or Sets the margin of the chart
          * @param  {object} _x Margin object to get/set
-         * @return { margin | module} Current margin or Bar Chart module to chain calls
+         * @return { margin | module} Current margin or Heatmap Chart module to chain calls
          * @public
          */
         exports.margin = function(_x) {
@@ -209,9 +255,23 @@ define(function(require) {
         };
 
         /**
+         * Exposes an 'on' method that acts as a bridge with the event dispatcher
+         * We are going to expose this events:
+         * customMouseOver and customMouseOut
+         *
+         * @return {module} Heatmap Chart
+         * @public
+         */
+        exports.on = function() {
+            let value = dispatcher.on.apply(dispatcher, arguments);
+
+            return value === dispatcher ? exports : value;
+        };
+
+        /**
          * Gets or Sets the width of the chart
          * @param  {number} _x Desired width for the graph
-         * @return { width | module} Current width or Bar Chart module to chain calls
+         * @return { width | module} Current width or Heatmap Chart module to chain calls
          * @public
          */
         exports.width = function(_x) {

@@ -34,7 +34,11 @@
 /******/
 /******/ 	// objects to store loaded and loading chunks
 /******/ 	var installedChunks = {
+<<<<<<< HEAD
 /******/ 		10: 0
+=======
+/******/ 		11:0
+>>>>>>> Tests passing
 /******/ 	};
 /******/
 /******/ 	// The require function
@@ -63,6 +67,7 @@
 /******/
 /******/ 	// This file contains only the entry chunk.
 /******/ 	// The chunk loading function for additional chunks
+<<<<<<< HEAD
 /******/ 	__webpack_require__.e = function requireEnsure(chunkId) {
 /******/ 		var installedChunkData = installedChunks[chunkId];
 /******/ 		if(installedChunkData === 0) {
@@ -90,6 +95,27 @@
 /******/
 /******/ 		if (__webpack_require__.nc) {
 /******/ 			script.setAttribute("nonce", __webpack_require__.nc);
+=======
+/******/ 	__webpack_require__.e = function requireEnsure(chunkId, callback) {
+/******/ 		// "0" is the signal for "already loaded"
+/******/ 		if(installedChunks[chunkId] === 0)
+/******/ 			return callback.call(null, __webpack_require__);
+/******/
+/******/ 		// an array means "currently loading".
+/******/ 		if(installedChunks[chunkId] !== undefined) {
+/******/ 			installedChunks[chunkId].push(callback);
+/******/ 		} else {
+/******/ 			// start chunk loading
+/******/ 			installedChunks[chunkId] = [callback];
+/******/ 			var head = document.getElementsByTagName('head')[0];
+/******/ 			var script = document.createElement('script');
+/******/ 			script.type = 'text/javascript';
+/******/ 			script.charset = 'utf-8';
+/******/ 			script.async = true;
+/******/
+/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"demo-bar","1":"demo-brush","2":"demo-donut","3":"demo-grouped-bar","4":"demo-heatmap","5":"demo-kitchen-sink","6":"demo-line","7":"demo-sparkline","8":"demo-stacked-area","9":"demo-stacked-bar","10":"demo-step"}[chunkId]||chunkId) + ".js";
+/******/ 			head.appendChild(script);
+>>>>>>> Tests passing
 /******/ 		}
 /******/ 		script.src = __webpack_require__.p + "" + chunkId + ".js";
 /******/ 		var timeout = setTimeout(onScriptComplete, 120000);

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 webpackJsonp([6],[
+=======
+webpackJsonp([3,11],[
+>>>>>>> Tests passing
 /* 0 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
