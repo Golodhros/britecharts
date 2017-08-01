@@ -6,7 +6,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
-        <title>Demos</title>
+        <title>Source: heatmap.js</title>
 
         
             <meta name="description" content="Britecharts is a client-side reusable Charting Library based on D3.js v4 that allows easy and intuitive use of charts and components that can be composed together creating amazing visualizations." />
@@ -79,7 +79,7 @@
                     </button>
             	</div>
             	<div class="navbar-collapse collapse" id="topNavigation">
-            		<ul class="nav navbar-nav navbar-right">
+            		<ul class="nav navbar-nav">
             			
                         
             			<li class="">
@@ -158,23 +158,20 @@
                         <li class="dropdown">
                             <a class="github-link" href="https://github.com/eventbrite/britecharts/">Github</a>
                         </li>
-                        <li class="dropdown">
-                            <a class="github-link" href="https://twitter.com/britecharts">Twitter</a>
-                        </li>
             		</ul>
                     
-                        <div class="col-sm-12 col-md-3 no-gutter pull-right">
-                            <form class="navbar-form" role="search">
-                                <div class="input-group search-container clearfix">
-                                    <input type="text" class="form-control pull-left" placeholder="Search" name="q" id="search-input">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default" id="search-submit">
-                                            <i class="glyphicon glyphicon-search"></i>
-                                        </button>
-                                    </span>
-                                </div>
-                            </form>
-                        </div>
+                    <div class="col-sm-12 col-md-4 no-gutter">
+                        <form class="navbar-form" role="search">
+                            <div class="input-group search-container clearfix">
+                                <input type="text" class="form-control pull-left" placeholder="Search" name="q" id="search-input">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" id="search-submit">
+                                        <i class="glyphicon glyphicon-search"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
                     
                 </div>
             </div>
@@ -183,93 +180,249 @@
         <main class="container" id="toc-content">
             <div class="row">
             	
-            	<div class="col-md-8 is-source">
+            	<div class="col-md-12">
             	
             		<div id="main">
             			
 
-	<h1 class="page-title">Demos</h1>
+		<h1 class="page-title">Source: heatmap.js</h1>
+    
 <section>
+    <article>
+        <pre class=""><code class="language-javascript">define(function(require) {
+    'use strict';
 
-<header>
-    
-        <h2>
+    const d3Array = require('d3-array');
+    const d3Ease = require('d3-ease');
+    const d3Axis = require('d3-axis');
+    const d3Color = require('d3-color');
+    const d3Dispatch = require('d3-dispatch');
+    const d3Format = require('d3-format');
+    const d3Scale = require('d3-scale');
+    const d3Selection = require('d3-selection');
+    const d3Transition = require('d3-transition');
+
+    const PERCENTAGE_FORMAT = '%';
+    const NUMBER_FORMAT = ',f';
+
+    /**
+     * @typedef HeatmapData
+     * @type {Array[]}
+     * @property {Number[]} values
+     *              {Number} values[0] weekday (0: Monday, 6: Sunday)
+     *              {Number} values[1] hour
+     *              {Number} values[2] quantity
+     *
+     * @example
+     * [
+     *      [0, 1, 3],
+     *      [1, 2, 4]
+     * ]
+     */
+
+    /**
+     * Heatmap reusable API class that renders a
+     * simple and configurable heatmap.
+     *
+     * @module Heatmap
+     * @tutorial heatmap
+     * @requires d3-array, d3-axis, d3-dispatch, d3-scale, d3-selection
+     *
+     * @example
+     * var barChart = bar();
+     *
+     * barChart
+     *     .height(500)
+     *     .width(800);
+     *
+     * d3Selection.select('.css-selector')
+     *     .datum(dataset)
+     *     .call(barChart);
+     *
+     */
+    return function module() {
+
+        let margin = {
+                top: 20,
+                right: 20,
+                bottom: 30,
+                left: 40
+            },
+            width = 960,
+            height = 500,
+            chartWidth, chartHeight,
+            data;
         
-        </h2>
-        
-    
-</header>
+        /**
+         * This function creates the graph using the selection as container
+         * @param  {D3Selection} _selection A d3 selection that represents
+         *                                  the container(s) where the chart(s) will be rendered
+         * @param {HeatmapData} _data The data to attach and generate the chart
+         */
+        function exports(_selection) {
+            _selection.each(function(_data) {
+                chartWidth = width - margin.left - margin.right;
+                chartHeight = height - margin.top - margin.bottom;
+                data = cleanData(_data);
 
+                // buildScales();
+                // buildAxis();
+                buildSVG(this);
+                // drawBars();
+                // drawAxis();
+            });
+        }
 
-<article>
-    <div class="container-overview">
-    
-        
+        /**
+         * Creates the d3 x and y axis, setting orientations
+         * @private
+         */
+        function buildAxis() {
+            if (isHorizontal) {
+                xAxis = d3Axis.axisBottom(xScale)
+                    .ticks(numOfHorizontalTicks, valueLabelFormat)
+                    .tickSizeInner([-chartHeight]);
 
-        
-<dl class="details">
-    
+                yAxis = d3Axis.axisLeft(yScale);
+            } else {
+                xAxis = d3Axis.axisBottom(xScale);
 
-	
+                yAxis = d3Axis.axisLeft(yScale)
+                    .ticks(numOfVerticalTicks, valueLabelFormat)
+            }
+        }
 
-	
+        /**
+         * Creates the x and y scales of the graph
+         * @private
+         */
+        function buildScales() {
+            let percentageAxis = Math.min(percentageAxisToMaxRatio * d3Array.max(data, getValue))
 
-	
+            if (isHorizontal) {
+                xScale = d3Scale.scaleLinear()
+                    .domain([0, percentageAxis])
+                    .rangeRound([0, chartWidth]);
 
-    
+                yScale = d3Scale.scaleBand()
+                    .domain(data.map(getName))
+                    .rangeRound([chartHeight, 0])
+                    .padding(0.1);
+            } else {
+                xScale = d3Scale.scaleBand()
+                    .domain(data.map(getName))
+                    .rangeRound([0, chartWidth])
+                    .padding(0.1);
 
-    
+                yScale = d3Scale.scaleLinear()
+                    .domain([0, percentageAxis])
+                    .rangeRound([chartHeight, 0]);
+            }
 
-    
+            if (shouldReverseColorList) {
+                colorList = data.map(d => d)
+                                .reverse()
+                                .map(({name}, i) => ({
+                                        name,
+                                        color: colorSchema[i % colorSchema.length]}
+                                    ));
+            } else {
+                colorList = data.map(d => d)
+                                .map(({name}, i) => ({
+                                        name,
+                                        color: colorSchema[i % colorSchema.length]}
+                                    ));
+            }
 
-    
+            colorMap = (item) => colorList.filter(({name}) => name === item)[0].color;
+        }
 
-	
+        /**
+         * Builds the SVG element that will contain the chart
+         * @param  {HTMLElement} container DOM element that will work as the container of the graph
+         * @private
+         */
+        function buildSVG(container) {
+            if (!svg) {
+                svg = d3Selection.select(container)
+                    .append('svg')
+                      .classed('britechart heatmap-chart', true);
 
-	
+                buildContainerGroups();
+            }
 
-	
+            svg
+                .attr('width', width)
+                .attr('height', height);
+        }
 
-	
+        /**
+         * Cleaning data adding the proper format
+         * @param  {HeatmapData} originalData Data
+         * @private
+         */
+        function cleanData(originalData) {
+            let data = originalData.map((d) => {
+                    return [ +d[0], +d[1], +d[2]];
+                });
 
-	
+            return data;
+        }
 
+        // API
 
+        /**
+         * Gets or Sets the height of the chart
+         * @param  {number} _x Desired width for the graph
+         * @return { height | module} Current height or Bar Chart module to chain calls
+         * @public
+         */
+        exports.height = function(_x) {
+            if (!arguments.length) {
+                return height;
+            }
+            height = _x;
 
-	
+            return this;
+        };
 
-	
+        /**
+         * Gets or Sets the margin of the chart
+         * @param  {object} _x Margin object to get/set
+         * @return { margin | module} Current margin or Bar Chart module to chain calls
+         * @public
+         */
+        exports.margin = function(_x) {
+            if (!arguments.length) {
+                return margin;
+            }
+            margin = _x;
 
-	
+            return this;
+        };
 
-	
-</dl>
+        /**
+         * Gets or Sets the width of the chart
+         * @param  {number} _x Desired width for the graph
+         * @return { width | module} Current width or Bar Chart module to chain calls
+         * @public
+         */
+        exports.width = function(_x) {
+            if (!arguments.length) {
+                return width;
+            }
+            width = _x;
 
+            return this;
+        };
 
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
+        return exports;
+    };
+});
+</code></pre>
+    </article>
 </section>
+
 
 
 
@@ -277,10 +430,6 @@
             		</div>
             	</div>
             	<div class="clearfix"></div>
-            	
-            		<div class="col-md-3">
-            			<div id="toc" class="col-md-3 hidden-xs hidden-sm"></div>
-            		</div>
             	
             </div>
         </main>
@@ -310,7 +459,7 @@
             	</span>
             
             <span class="jsdoc-message">
-            	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a>
+            	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
             	
             	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
             </span>

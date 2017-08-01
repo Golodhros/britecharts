@@ -16,17 +16,18 @@ var webpack = require('webpack'),
 
     currentCharts = {
         'bar': './src/charts/bar.js',
+        'brush': './src/charts/brush.js',
         'donut': './src/charts/donut.js',
+        'groupedBar': './src/charts/grouped-bar.js',
+        'heatmap': './src/charts/heatmap.js',
         'legend': './src/charts/legend.js',
         'line': './src/charts/line.js',
-        'tooltip': './src/charts/tooltip.js',
         'miniTooltip': './src/charts/mini-tooltip.js',
         'sparkline': './src/charts/sparkline.js',
         'stackedArea': './src/charts/stacked-area.js',
         'stackedBar': './src/charts/stacked-bar.js',
-        'groupedBar': './src/charts/grouped-bar.js',
         'step': './src/charts/step.js',
-        'brush': './src/charts/brush.js',
+        'tooltip': './src/charts/tooltip.js',
         // hack to make webpack use colors as an entry point while its also a dependency of the charts above
         'colors': ['./src/charts/helpers/colors.js']
     },

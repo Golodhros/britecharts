@@ -6,7 +6,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
-        <title>Demos</title>
+        <title>Tutorial: Heatmap Chart</title>
 
         
             <meta name="description" content="Britecharts is a client-side reusable Charting Library based on D3.js v4 that allows easy and intuitive use of charts and components that can be composed together creating amazing visualizations." />
@@ -79,7 +79,7 @@
                     </button>
             	</div>
             	<div class="navbar-collapse collapse" id="topNavigation">
-            		<ul class="nav navbar-nav navbar-right">
+            		<ul class="nav navbar-nav">
             			
                         
             			<li class="">
@@ -158,23 +158,20 @@
                         <li class="dropdown">
                             <a class="github-link" href="https://github.com/eventbrite/britecharts/">Github</a>
                         </li>
-                        <li class="dropdown">
-                            <a class="github-link" href="https://twitter.com/britecharts">Twitter</a>
-                        </li>
             		</ul>
                     
-                        <div class="col-sm-12 col-md-3 no-gutter pull-right">
-                            <form class="navbar-form" role="search">
-                                <div class="input-group search-container clearfix">
-                                    <input type="text" class="form-control pull-left" placeholder="Search" name="q" id="search-input">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default" id="search-submit">
-                                            <i class="glyphicon glyphicon-search"></i>
-                                        </button>
-                                    </span>
-                                </div>
-                            </form>
-                        </div>
+                    <div class="col-sm-12 col-md-4 no-gutter">
+                        <form class="navbar-form" role="search">
+                            <div class="input-group search-container clearfix">
+                                <input type="text" class="form-control pull-left" placeholder="Search" name="q" id="search-input">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" id="search-submit">
+                                        <i class="glyphicon glyphicon-search"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
                     
                 </div>
             </div>
@@ -183,104 +180,56 @@
         <main class="container" id="toc-content">
             <div class="row">
             	
-            	<div class="col-md-8 is-source">
+            	<div class="col-md-12">
             	
             		<div id="main">
-            			
-
-	<h1 class="page-title">Demos</h1>
-<section>
-
-<header>
-    
-        <h2>
+            			<section class="tutorial-section" id="tutorial-heatmap" data-filename="tutorial-heatmap.html">
+    <header>
         
-        </h2>
-        
-    
-</header>
+        <h2 class="tutorial-section__heading">Heatmap Chart</h2>
+    </header>
+    <article>
+        <div class="container" id="heatmap">
+    <div class="row">
+        <div class="col-md-6">
+            <article>
+                <h2 class="tutorial__heading">Heatmap Chart</h2>
+                <div class="card--chart">
+                    <div class="js-heatmap-chart-container heatmap-chart-container"></div>
+                </div>
+            </article>
+        </div>
+        <div class="col-md-6 sidebar">
+            <h3>The code</h3>
+            <pre><code class="language-javascript">
+                <!--TODO: Fill  -->
+            </code></pre>
 
+            <!-- <h4>Colors</h4>
+            <label class="control-label">You can also check other color schemas:</label>
+            <div class="js-color-selector-container"></div>
+            </p> -->
 
-<article>
-    <div class="container-overview">
-    
-        
+            <h4>Data Input</h4>
+            <p>Check the <a href="/britecharts/global.html#HeatmapChartData__anchor">data input schema</a> of this chart.</p>
 
-        
-<dl class="details">
-    
+            <!-- <h4>Export Chart</h4>
+            <p>You can also export this chart by pressing: <input id="button" type="button" value="Export" class="btn btn-sm btn-primary" /></p> -->
 
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-        
-    
+            <h4>Demo Code</h4>
+            <p>Read the whole code of this demo <a href="https://github.com/eventbrite/britecharts/blob/master/demos/demo-heatmap.js">in github</a></p>
+        </div>
     </div>
+</div>
 
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
+    </article>
 </section>
 
-
-
+<script src="/britecharts/scripts/demo-heatmap.js"></script>
 
             		</div>
             	</div>
             	<div class="clearfix"></div>
-            	
-            		<div class="col-md-3">
-            			<div id="toc" class="col-md-3 hidden-xs hidden-sm"></div>
-            		</div>
             	
             </div>
         </main>
@@ -310,7 +259,7 @@
             	</span>
             
             <span class="jsdoc-message">
-            	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a>
+            	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
             	
             	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
             </span>
