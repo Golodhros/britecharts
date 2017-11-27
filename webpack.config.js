@@ -32,16 +32,17 @@ var webpack = require('webpack'),
         'colors': ['./src/charts/helpers/colors.js']
     },
     currentDemos = {
-        'demo-line': './demos/demo-line.js',
-        'demo-stacked-area': './demos/demo-stacked-area.js',
         'demo-bar': './demos/demo-bar.js',
-        'demo-grouped-bar': './demos/demo-grouped-bar.js',
-        'demo-stacked-bar': './demos/demo-stacked-bar.js',
-        'demo-donut': './demos/demo-donut.js',
-        'demo-sparkline': './demos/demo-sparkline.js',
-        'demo-step': './demos/demo-step.js',
         'demo-brush': './demos/demo-brush.js',
-        'demo-kitchen-sink': './demos/demo-kitchen-sink.js'
+        'demo-donut': './demos/demo-donut.js',
+        'demo-grouped-bar': './demos/demo-grouped-bar.js',
+        'demo-heatmap': './demos/demo-heatmap.js',
+        'demo-kitchen-sink': './demos/demo-kitchen-sink.js',
+        'demo-line': './demos/demo-line.js',
+        'demo-sparkline': './demos/demo-sparkline.js',
+        'demo-stacked-area': './demos/demo-stacked-area.js',
+        'demo-stacked-bar': './demos/demo-stacked-bar.js',
+        'demo-step': './demos/demo-step.js',
     },
 
     defaultJSLoader = {

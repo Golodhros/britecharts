@@ -3,7 +3,7 @@ define(function(require) {
 
     var _ = require('underscore'),
 
-        jsonGithubCommits = require('json!../json/heatmapGithubCommits.json');
+        jsonGithubCommits = require('json-loader!../json/heatmapGithubCommits.json');
 
 
     function HeatmapDataBuilder(config){
